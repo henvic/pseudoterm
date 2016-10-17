@@ -5,6 +5,6 @@ IFS=$'\n\t'
 
 echo "Hi!"
 sleep 0.05
-echO "Wait..."
+echo "Wait..."
 sleep 0.1
 echo "Bye!"
