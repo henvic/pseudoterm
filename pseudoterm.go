@@ -39,7 +39,7 @@ var (
 )
 
 // Terminal is a pseudo terminal you can use to run commands
-// on a pseudo tty programatically
+// on a pseudo tty programmatically
 type Terminal struct {
 	Command         *exec.Cmd
 	EchoStream      io.Writer

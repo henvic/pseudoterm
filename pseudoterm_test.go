@@ -702,7 +702,7 @@ func TestStoryAddAndInternalShift(t *testing.T) {
 	}
 
 	if len(story.Sequence) != 0 {
-		t.Errorf("Expected sequence to have lenght 0, got %v instead", len(story.Sequence))
+		t.Errorf("Expected sequence to have length 0, got %v instead", len(story.Sequence))
 	}
 
 	var stepDummy = story.shift()
@@ -712,7 +712,7 @@ func TestStoryAddAndInternalShift(t *testing.T) {
 	}
 
 	if len(story.Sequence) != 0 {
-		t.Errorf("Expected sequence to have lenght 0, got %v instead", len(story.Sequence))
+		t.Errorf("Expected sequence to have length 0, got %v instead", len(story.Sequence))
 	}
 
 	if !story.Success() {
