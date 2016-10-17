@@ -240,7 +240,8 @@ func (t *Terminal) handleLine(line string, s Story) (end bool, err error) {
 	return false, nil
 }
 
-// QueueStory is a command execution story with sequential steps that must be fulfilled
+// QueueStory is a command execution story with sequential steps
+// that must be fulfilled before the next is executed
 type QueueStory struct {
 	Sequence      []Step
 	Timeout       time.Duration
