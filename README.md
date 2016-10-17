@@ -41,7 +41,9 @@ type Terminal struct {
 
 If you want to print to standard output, set EchoStream to `os.Stdout`. If you need to copy the output both to stdout and somewhere else, you might want to use `io.TeeReader`.
 
-CopyStreamError is useful for debugging, but quite problematic to rely on.
+***stderr** and **stdout** are combined before printing on a tty: this is why there is only an "EchoStream" for the Terminal type here and no Step.ReadFromStderr and Step.ReadFromStdout.*
+
+*Also, CopyStreamError is useful for debugging, but quite problematic to rely on. Ignore it, unless you are debugging something complex.*
 
 Terminal methods you need to know about:
 
