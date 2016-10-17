@@ -1,0 +1,5 @@
+build:
+  image: golang:1.7.1
+  commands:
+    - go version
+    - go test -v $(go list ./... | grep -v /vendor/)
