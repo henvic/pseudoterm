@@ -1,8 +1,8 @@
 # pseudoterm [![Build Status](http://img.shields.io/travis/henvic/pseudoterm/master.svg?style=flat)](https://travis-ci.org/henvic/pseudoterm) [![Coverage Status](https://coveralls.io/repos/henvic/pseudoterm/badge.svg)](https://coveralls.io/r/henvic/pseudoterm) [![codebeat badge](https://codebeat.co/badges/9f970e36-d039-434a-b0db-3c9471fab567)](https://codebeat.co/projects/github-com-henvic-pseudoterm) [![Go Report Card](https://goreportcard.com/badge/github.com/henvic/pseudoterm)](https://goreportcard.com/report/github.com/henvic/pseudoterm) [![GoDoc](https://godoc.org/github.com/henvic/pseudoterm?status.svg)](https://godoc.org/github.com/henvic/pseudoterm)
 
-This framework allows you to create programs using Go to run an interactive program programmatically in an easy way.
+This framework allows you to create a program using Go able to run an interactive program programmatically in an easy way.
 
-This can be useful both for automation and running integration / functional tests that for CLI tools with prompts intended for human beings.
+This can be useful both for automation and running integration / functional testing of CLI tools with prompts intended for human beings.
 
 [![asciicast](https://asciinema.org/a/02xhla8u9nvifz6x6q728ymv5.png)](https://asciinema.org/a/02xhla8u9nvifz6x6q728ymv5)
 
@@ -22,9 +22,9 @@ type Story interface {
 }
 ```
 
-1. `Setup()` is called before the story starts running on the terminal.
-2. `Teardown()` is called to setup any required clean up, after the story ends.
-3. `TickHandler()` is called every time pseudoterm checks if there is new input on the pseudo [tty](https://en.wikipedia.org/wiki/TTY). This happens between LineReaderInterval, and you probably don't want or need to change its default value.
+1. `Setup()` is called before the story starts running on the terminal. Use `context.Background()` if you don't need a cancelable [context](https://blog.golang.org/context).
+2. `Teardown()` is called to setup any required clean up (such as canceling context), after the story ends.
+3. `TickHandler()` is called every time pseudoterm checks if there is new input on the pseudo [tty](https://en.wikipedia.org/wiki/TTY). This happens between LineReaderInterval. We use a sane LineReaderInterval default value of 10ms. Changing it has side-effects on performance and CPU usage.
 4. `HandleLine()` is called just after TickHandler() when there is a new line to be processed available. If there is not, it is not called.
 
 ## Terminal
@@ -39,9 +39,9 @@ type Terminal struct {
 }
 ```
 
-If you want to print to standard output, set EchoStream to `os.Stdout`. You most likely can leave CopyStreamError alone (it is more useful for debugging, and it is quite problematic to deal with it and different platforms).
+If you want to print to standard output, set EchoStream to `os.Stdout`. If you need to copy the output both to stdout and somewhere else, you might want to use `io.TeeReader`.
 
-If you need to copy the output both to stdout and somewhere else, you might want to use `io.TeeReader`.
+CopyStreamError is useful for debugging, but quite problematic to rely on.
 
 Terminal methods you need to know about:
 
@@ -83,15 +83,14 @@ type Step struct {
 }
 ```
 
-Each step has a string it waits to read, a string it writes when the read operation happens (or skip triggered by a SkipWrite: true value), and a timeout.
+Each step has a string it waits to read, a string it writes when the read operation happens (unless a SkipWrite is set to true), and a timeout.
 
-When not defined *(same as setting to `time.Duration(0)`)*, the lack of timeout means the story or the step never times out.
-
-It is highly recommended for all stories to time out after some time (ignore this if your programs should never exit, though this library is not tested for this use case).
+It is highly recommended for all stories to set a Timeout. When not defined, the story or the step never times out and the program might end up executing forever. A Step Timeout doesn't overrides a Story Timeout.
 
 ## Special error values for line handling
 terminal.HandleLine can return two special error values:
-1. `SkipWrite` is used as a return value from Story HandleLine to indicate that a line should not be written when reading a line on a given step. Useful when you want to verify if a line was printed on the terminal, but you don't need to write a line in response.
+
+1. `SkipWrite` is used as a return value from Story HandleLine to indicate that a line should not be written when reading a line on a given step. Useful as a checkpoint when you want to verify if a line was printed on the terminal, but you don't need to write a line in response.
 2. `SkipZeroMatches` is used as a return value from Story HandleLine to indicate that there are no more steps left to be dealt with.
 
 ## Dependencies
@@ -109,6 +108,6 @@ Keep your commits neat. Try to always rebase your changes before publishing them
 
 [goreportcard](https://goreportcard.com/report/github.com/henvic/pseudoterm) can be used online or locally to detect defects and static analysis results from tools such as go vet, go lint, gocyclo, and more. Run [errcheck](https://github.com/kisielk/errcheck) to fix ignored error returns.
 
-Please ignore the warnings about SkipWrite and SkipZeroMatches on golint. This is akin of `filepath.SkipDir` to make it easier for people to understand.
+SkipWrite and SkipZeroMatches are akin of `filepath.SkipDir`. Ignore the golint warnings about naming convention for them as their naming are like this to help understand what it stands for.
 
 Using go test and go cover are essential to make sure your code is covered with unit tests.
