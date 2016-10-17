@@ -107,7 +107,7 @@ The master branch of this repository on GitHub is protected:
 
 Keep your commits neat. Try to always rebase your changes before publishing them.
 
-[goreportcard](https://goreportcard.com/report/github.com/wedeploy/cli) can be used online or locally to detect defects and static analysis results from tools such as go vet, go lint, gocyclo, and more. Run [errcheck](https://github.com/kisielk/errcheck) to fix ignored error returns.
+[goreportcard](https://goreportcard.com/report/github.com/henvic/pseudoterm) can be used online or locally to detect defects and static analysis results from tools such as go vet, go lint, gocyclo, and more. Run [errcheck](https://github.com/kisielk/errcheck) to fix ignored error returns.
 
 Please ignore the warnings about SkipWrite and SkipZeroMatches on golint. This is akin of `filepath.SkipDir` to make it easier for people to understand.
 
