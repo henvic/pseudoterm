@@ -95,14 +95,10 @@ func TestTerminalWithCat(t *testing.T) {
 		t.Errorf("Expected no error during stop, got %v instead", err)
 	}
 
-	if err := term.CopyStreamError; err != nil {
-		t.Errorf("Expected no error for closing, got %v instead", term.CopyStreamError)
-	}
-
 	var log = `Starting... one
 two
 three
-^DStarting... one
+Starting... one
 two
 three
 `
@@ -178,10 +174,6 @@ Bye!`
 
 	if !term.processState.Success() {
 		t.Errorf("Expected process to have terminated successfully")
-	}
-
-	if term.CopyStreamError != nil {
-		t.Errorf("Expected no error on copy stream, got %v instead", term.CopyStreamError)
 	}
 }
 
@@ -401,7 +393,7 @@ func TestTerminalWithStoryTimeout(t *testing.T) {
 	var log = `Starting
 Your name: Henrique
 Your name is Henrique
-^D`
+`
 
 	assertSimilar(t, log, echoStream.String())
 
@@ -465,7 +457,7 @@ func TestTerminalWithStoryStepTimeout(t *testing.T) {
 	var log = `Starting
 Your name: Henrique
 Your name is Henrique
-^D`
+`
 
 	assertSimilar(t, log, echoStream.String())
 
@@ -731,6 +723,7 @@ func assertSimilar(t *testing.T, want string, got string) {
 // Normalize string breaking lines with \n and removing extra spacing
 // on the beginning and end of strings
 func normalize(s string) string {
+	s = strings.Replace(s, "^D", "", -1)
 	var parts = strings.Split(s, "\n")
 	var final = make([]string, 10*len(parts))
 
