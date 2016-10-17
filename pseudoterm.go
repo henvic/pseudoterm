@@ -243,7 +243,7 @@ func (t *Terminal) handleLine(line string, s Story) (end bool, err error) {
 // QueueStory is a command execution story with sequential steps that must be fulfilled
 type QueueStory struct {
 	Sequence      []Step
-	StepTimeout   time.Duration
+	Timeout       time.Duration
 	pastStepTime  time.Time
 	ctx           context.Context
 	ctxCancelFunc context.CancelFunc
@@ -274,8 +274,8 @@ func (q *QueueStory) Setup() (ctx context.Context, err error) {
 	q.pastStepTime = time.Now()
 	q.ctx, q.ctxCancelFunc = context.WithCancel(context.Background())
 
-	if q.StepTimeout != time.Duration(0) {
-		q.ctx, q.ctxCancelFunc = context.WithTimeout(q.ctx, q.StepTimeout)
+	if q.Timeout != time.Duration(0) {
+		q.ctx, q.ctxCancelFunc = context.WithTimeout(q.ctx, q.Timeout)
 	}
 
 	return q.ctx, nil

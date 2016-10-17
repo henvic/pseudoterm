@@ -16,7 +16,7 @@ func main() {
 	}
 
 	var story = &pseudoterm.QueueStory{
-		StepTimeout: 5 * time.Second,
+		Timeout: 5 * time.Second,
 	}
 
 	story.Add(pseudoterm.Step{

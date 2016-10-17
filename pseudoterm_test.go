@@ -135,7 +135,7 @@ func TestTerminalWithStory(t *testing.T) {
 	}
 
 	var story = &QueueStory{
-		StepTimeout: 5 * time.Second,
+		Timeout: 5 * time.Second,
 	}
 
 	story.Add(Step{
@@ -185,7 +185,7 @@ func TestTerminalWithStoryShouldNotBlock(t *testing.T) {
 	}
 
 	var story = &QueueStory{
-		StepTimeout: 6 * time.Second,
+		Timeout: 6 * time.Second,
 	}
 
 	story.Add(Step{
@@ -266,7 +266,7 @@ func TestTerminalWithAlreadyStartedStory(t *testing.T) {
 	}
 
 	var story = &QueueStory{
-		StepTimeout: 5 * time.Second,
+		Timeout: 5 * time.Second,
 	}
 
 	story.Add(Step{
@@ -299,7 +299,7 @@ func TestTerminalWithStoryAndNoOutput(t *testing.T) {
 	}
 
 	var story = &QueueStory{
-		StepTimeout: 5 * time.Second,
+		Timeout: 5 * time.Second,
 	}
 
 	story.Add(Step{
@@ -336,7 +336,7 @@ func TestTerminalWithReadnlyStory(t *testing.T) {
 	}
 
 	var story = &QueueStory{
-		StepTimeout: 5 * time.Second,
+		Timeout: 5 * time.Second,
 	}
 
 	if err := term.Run(story); err != nil {
@@ -362,7 +362,7 @@ func TestTerminalWithStoryTimeout(t *testing.T) {
 	}
 
 	var story = &QueueStory{
-		StepTimeout: 100 * time.Millisecond,
+		Timeout: 100 * time.Millisecond,
 	}
 
 	story.Add(Step{
@@ -422,7 +422,7 @@ Your name is Henrique
 	}
 }
 
-func TestTerminalWithStoryStepTimeout(t *testing.T) {
+func TestTerminalWithStepTimeout(t *testing.T) {
 	var echoStream = &bytes.Buffer{}
 	var term = &Terminal{
 		Command:    exec.Command("mocks/mock-timeout.sh"),
@@ -430,7 +430,7 @@ func TestTerminalWithStoryStepTimeout(t *testing.T) {
 	}
 
 	var story = &QueueStory{
-		StepTimeout: 5 * time.Second,
+		Timeout: 5 * time.Second,
 	}
 
 	story.Add(Step{
@@ -480,7 +480,7 @@ Your name is Henrique
 
 func TestStoryTimeout(t *testing.T) {
 	var story = &QueueStory{
-		StepTimeout: 10 * time.Millisecond,
+		Timeout: 10 * time.Millisecond,
 	}
 
 	var sequence = []Step{
@@ -527,7 +527,7 @@ func TestStoryTimeout(t *testing.T) {
 	}
 }
 
-func TestStoryStepTimeout(t *testing.T) {
+func TestStepTimeout(t *testing.T) {
 	var story = &QueueStory{}
 
 	var sequence = []Step{
@@ -583,7 +583,7 @@ func TestStoryStepTimeout(t *testing.T) {
 
 func TestStoryCancel(t *testing.T) {
 	var story = &QueueStory{
-		StepTimeout: 10 * time.Millisecond,
+		Timeout: 10 * time.Millisecond,
 	}
 
 	var sequence = []Step{
@@ -621,7 +621,7 @@ func TestStoryCancel(t *testing.T) {
 
 func TestStoryHandleLineAndTeardown(t *testing.T) {
 	var story = &QueueStory{
-		StepTimeout: 4 * LineReaderInterval,
+		Timeout: 4 * LineReaderInterval,
 	}
 
 	var sequence = []Step{
