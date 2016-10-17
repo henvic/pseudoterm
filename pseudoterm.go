@@ -219,10 +219,10 @@ func (t *Terminal) readLine(s Story) (end bool, err error) {
 		return false, err
 	}
 
-	return t.handleLine(s)
+	return t.handleLine(line, s)
 }
 
-func (t *Terminal) handleLine(s Story) (end bool, err error) {
+func (t *Terminal) handleLine(line string, s Story) (end bool, err error) {
 	if len(line) != 0 {
 		in, err := s.HandleLine(line)
 
