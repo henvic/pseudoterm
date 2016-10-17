@@ -10,7 +10,7 @@ echo "Your name is $YOUR_NAME"
 sleep 0.05
 
 read -p "Your age: " YOUR_AGE < /dev/tty;
-echo "Your name is $YOUR_AGE"
+echo "Your age is $YOUR_AGE"
 
 sleep 0.1
 

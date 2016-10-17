@@ -11,6 +11,6 @@ echo "Your name is $YOUR_NAME"
 sleep 10
 
 read -p "Your age: " YOUR_AGE < /dev/tty;
-echo "Your name is $YOUR_AGE"
+echo "Your age is $YOUR_AGE"
 
 echo "Bye!"

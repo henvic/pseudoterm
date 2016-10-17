@@ -159,7 +159,7 @@ func TestTerminalWithStory(t *testing.T) {
 Your name: Henrique
 Your name is Henrique
 Your age: 10
-Your name is 10
+Your age is 10
 Bye!`
 
 	assertSimilar(t, log, echoStream.String())
@@ -239,7 +239,7 @@ Starting
 Your name: Henrique
 Your name is Henrique
 Your age: 10
-Your name is 10
+Your age is 10
 Avoid killing itself? [no]: yes
 Bye!`
 
