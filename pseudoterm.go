@@ -1,3 +1,7 @@
+/*
+pseudoterm is a framework for running iterative programs programmatically with Go.
+	https://github.com/henvic/picel
+*/
 package pseudoterm
 
 import (
