@@ -397,7 +397,7 @@ func TestTerminalWithStoryAndNoOutput(t *testing.T) {
 	}
 }
 
-func TestTerminalWithReadnlyStory(t *testing.T) {
+func TestTerminalWithReadOnlyStory(t *testing.T) {
 	var echoStream = &bytes.Buffer{}
 	var term = &Terminal{
 		Command:    exec.Command("mocks/read-only-mock.sh"),
