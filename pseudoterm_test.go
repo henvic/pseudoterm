@@ -246,6 +246,83 @@ Bye!`
 	}
 }
 
+func TestTerminalWithComplexStoryPrecedence(t *testing.T) {
+	var echoStream = &bytes.Buffer{}
+	var term = &Terminal{
+		Command:    exec.Command("mocks/mock-precedence-test.sh"),
+		EchoStream: echoStream,
+	}
+
+	var story = &QueueStory{
+		Timeout: 5 * time.Second,
+	}
+
+	var numFromStep string
+
+	story.Add(
+		Step{
+			Read:      "Skip",
+			ReadRegex: regexp.MustCompile("^[0-9]+$"),
+			ReadFunc: func(in string) bool {
+				return strings.Contains(in, "Starting")
+			},
+			SkipWrite: true,
+		},
+		Step{
+			Read:      "Skip",
+			ReadRegex: regexp.MustCompile("[a-z]:"),
+			Write:     "Henrique",
+		},
+		Step{
+			ReadRegex: regexp.MustCompile("^[a-d]+$"),
+			ReadFunc: func(in string) bool {
+				return strings.Contains(in, "Your age:")
+			},
+			Write: "10",
+		},
+		Step{
+			ReadRegex: regexp.MustCompile("p([a-z]+)ch"),
+			Write:     "ok",
+		},
+		Step{
+			Read: "Skip",
+			ReadFunc: func(in string) bool {
+				numFromStep = strings.TrimPrefix(in, "Random: ")
+				return strings.HasPrefix(in, "Random: ")
+			},
+			Write: "ack",
+		})
+
+	if err := term.Run(story); err != nil {
+		t.Errorf("Expected no error during run, got %v instead", err)
+	}
+
+	var log = `Starting
+Your name: Henrique
+Your name is Henrique
+Your age: 10
+Your age is 10
+Do you want a peach? ok
+peach: ok
+Random: ` + numFromStep + `ack
+num: ack
+Bye!`
+
+	assertSimilar(t, log, echoStream.String())
+
+	if !story.Success() {
+		t.Errorf("Story didn't success.")
+	}
+
+	if !term.processState.Exited() {
+		t.Errorf("Expected process to have exited")
+	}
+
+	if !term.processState.Success() {
+		t.Errorf("Expected process to have terminated successfully")
+	}
+}
+
 func TestTerminalWithStoryShouldNotBlock(t *testing.T) {
 	var echoStream = &bytes.Buffer{}
 	var term = &Terminal{
