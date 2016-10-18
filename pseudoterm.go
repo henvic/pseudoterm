@@ -12,6 +12,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"regexp"
 	"strings"
 	"time"
 
@@ -253,6 +254,8 @@ type QueueStory struct {
 // Step is like a route rule to handle lines
 type Step struct {
 	Read       string
+	ReadRegex  *regexp.Regexp
+	ReadFunc   func(in string) bool
 	Write      string
 	SkipWrite  bool
 	Timeout    time.Duration
@@ -324,18 +327,29 @@ func (q *QueueStory) HandleLine(s string) (in string, err error) {
 		return "", SkipZeroMatches
 	}
 
-	if similar(s, q.Sequence[0].Read) {
-		var step = q.shift()
-		q.pastStepTime = time.Now()
-
-		if step.SkipWrite {
-			return "", SkipWrite
-		}
-
-		return step.Write, nil
+	if match := q.matcher(s, q.Sequence[0]); !match {
+		return "", SkipWrite
 	}
 
-	return "", SkipWrite
+	var step = q.shift()
+	q.pastStepTime = time.Now()
+
+	if step.SkipWrite {
+		return "", SkipWrite
+	}
+
+	return step.Write, nil
+}
+
+func (q *QueueStory) matcher(in string, step Step) bool {
+	switch {
+	case step.ReadFunc != nil:
+		return step.ReadFunc(in)
+	case step.ReadRegex != nil:
+		return step.ReadRegex.MatchString(in)
+	default:
+		return similar(in, step.Read)
+	}
 }
 
 // Success tells if all steps are executed and there is none left

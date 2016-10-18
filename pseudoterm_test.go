@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"reflect"
+	"regexp"
 	"strings"
 	"sync"
 	"testing"
@@ -160,6 +161,74 @@ Your name: Henrique
 Your name is Henrique
 Your age: 10
 Your age is 10
+Bye!`
+
+	assertSimilar(t, log, echoStream.String())
+
+	if !story.Success() {
+		t.Errorf("Story didn't success.")
+	}
+
+	if !term.processState.Exited() {
+		t.Errorf("Expected process to have exited")
+	}
+
+	if !term.processState.Success() {
+		t.Errorf("Expected process to have terminated successfully")
+	}
+}
+
+func TestTerminalWithComplexStory(t *testing.T) {
+	var echoStream = &bytes.Buffer{}
+	var term = &Terminal{
+		Command:    exec.Command("mocks/mock-complex.sh"),
+		EchoStream: echoStream,
+	}
+
+	var story = &QueueStory{
+		Timeout: 5 * time.Second,
+	}
+
+	var numFromStep string
+
+	story.Add(
+		Step{
+			Read:      "Starting",
+			SkipWrite: true,
+		},
+		Step{
+			Read:  "Your name:",
+			Write: "Henrique",
+		},
+		Step{
+			Read:  "Your age:",
+			Write: "10",
+		},
+		Step{
+			ReadRegex: regexp.MustCompile("p([a-z]+)ch"),
+			Write:     "ok",
+		},
+		Step{
+			ReadFunc: func(in string) bool {
+				numFromStep = strings.TrimPrefix(in, "Random: ")
+				return strings.HasPrefix(in, "Random: ")
+			},
+			Write: "ack",
+		})
+
+	if err := term.Run(story); err != nil {
+		t.Errorf("Expected no error during run, got %v instead", err)
+	}
+
+	var log = `Starting
+Your name: Henrique
+Your name is Henrique
+Your age: 10
+Your age is 10
+Do you want a peach? ok
+peach: ok
+Random: ` + numFromStep + `ack
+num: ack
 Bye!`
 
 	assertSimilar(t, log, echoStream.String())
@@ -689,12 +758,12 @@ func TestStoryAddAndInternalShift(t *testing.T) {
 
 	var step = story.shift()
 
-	if step != addStep {
-		t.Errorf("Expected step is not added one")
-	}
-
 	if len(story.Sequence) != 0 {
 		t.Errorf("Expected sequence to have length 0, got %v instead", len(story.Sequence))
+	}
+
+	if step.Read != "foo" {
+		t.Errorf("Wrong value on step")
 	}
 
 	var stepDummy = story.shift()

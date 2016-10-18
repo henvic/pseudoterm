@@ -81,6 +81,8 @@ _t.Run() doesn't return an error due to steps not executed. You might want to ve
 // Step is like a route rule to handle lines
 type Step struct {
 	Read       string
+	ReadRegex  *regexp.Regexp
+	ReadFunc   func(in string) bool
 	Write      string
 	SkipWrite  bool
 	Timeout    time.Duration
@@ -88,6 +90,8 @@ type Step struct {
 ```
 
 Each step has a string it waits to read, a string it writes when the read operation happens (unless a SkipWrite is set to true), and a timeout.
+
+Matchers order of precedence: **`ReadFunc > ReadRegex > Read`**. Only the most important matcher on each `Step` is tested on `QueueStory`.
 
 It is highly recommended for all stories to set a Timeout. When not defined, the story or the step never times out and the program might end up executing forever. A Step Timeout doesn't overrides a Story Timeout.
 
