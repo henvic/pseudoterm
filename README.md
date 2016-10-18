@@ -72,6 +72,8 @@ QueueStory methods you need to know about:
 * `q.Success() bool` returns if the story was run successfully or not
 * `q.Cancel()` is used to cancel a story
 
+_t.Run() doesn't return an error due to steps not executed. You might want to verify if a story has run successfully or not with q.Success() if you want to make sure all steps were executed._
+
 
 ### QueueStory Step{}
 
